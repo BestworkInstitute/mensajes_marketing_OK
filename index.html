@@ -96,13 +96,12 @@
       <h2>Iniciar Sesión</h2>
       <input type="text" id="username" placeholder="Nombre de Usuario">
       <input type="password" id="password" placeholder="Contraseña">
-      <button onclick="login()">Ingresar</button>
+      <button onclick="login()">Ingresar al Envío</button>
     </div>
 
     <!-- Main Panel -->
     <div id="mainPanel" class="hidden">
       <h2>Subir Documento de Excel</h2>
-      <!-- Menú Desplegable para Flow -->
       <label for="flowSelect">Selecciona el Flow:</label>
       <select id="flowSelect">
         <option value="">-- Selecciona un Flow --</option>
@@ -111,7 +110,6 @@
       </select>
       <input type="file" id="uploadExcel">
       
-      <!-- Tabla de Datos -->
       <table id="dataTable">
         <thead>
           <tr>
@@ -138,7 +136,6 @@
     ];
     let flow = "";
     let datos = [];
-    let contador80En15Min = 0;
 
     function login() {
       const username = document.getElementById('username').value;
@@ -191,8 +188,26 @@
         logToConsole("Selecciona un Flow antes de enviar los mensajes.");
         return;
       }
-      for (let i = 0; i < datos.length; i++) {
-        await agregarContactoAFlow(datos[i][1], datos[i][0], datos[i][2], datos[i][3], flow);
+
+      const totalMensajes = datos.length;
+      let enviados = 0;
+
+      while (enviados < totalMensajes) {
+        let loteTamanio = enviados % 100 === 0 ? 70 : 30;
+        let limite = Math.min(enviados + loteTamanio, totalMensajes);
+
+        logToConsole(`Enviando mensajes del ${enviados + 1} al ${limite}...`);
+
+        for (let i = enviados; i < limite; i++) {
+          await agregarContactoAFlow(datos[i][1], datos[i][0], datos[i][2], datos[i][3], flow);
+        }
+
+        enviados = limite;
+
+        if (enviados < totalMensajes) {
+          logToConsole("Esperando 15 minutos...");
+          await esperar(15 * 60 * 1000);
+        }
       }
       logToConsole("Envío completado.");
     }
@@ -206,6 +221,10 @@
       } catch (error) {
         logToConsole(`Error enviando mensaje a ${NOMBRE} (${CELULAR}): ${error}`);
       }
+    }
+
+    function esperar(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     function logToConsole(message) {
