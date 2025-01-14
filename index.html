@@ -40,8 +40,6 @@
       font-size: 16px;
     }
     button {
-      background-color: #FF7F50;
-      color: white;
       border: none;
       padding: 10px 20px;
       margin: 10px;
@@ -50,7 +48,15 @@
       cursor: pointer;
     }
     button:hover {
-      background-color: #ff5a2b;
+      opacity: 0.9;
+    }
+    button#loginButton {
+      background-color: #FF7F50;
+      color: white;
+    }
+    button#processDocumentButton {
+      background-color: #28A745;
+      color: white;
     }
     table {
       width: 100%;
@@ -96,7 +102,10 @@
       <h2>Iniciar Sesión</h2>
       <input type="text" id="username" placeholder="Nombre de Usuario">
       <input type="password" id="password" placeholder="Contraseña">
-      <button onclick="login()">Ingresar al Envío</button>
+      <div>
+        <button id="loginButton" onclick="login()">Ingresar al Envío</button>
+        <button id="processDocumentButton" onclick="window.location.href='https://obtener-datos.vercel.app/'">Procesar Documento</button>
+      </div>
     </div>
 
     <!-- Main Panel -->
